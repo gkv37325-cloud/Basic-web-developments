@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Basics of Web Development</title>
+
+    <!-- CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f6ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 75%;
+            margin: 50px auto;
+            background-color: #ffffff;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #333399;
+        }
+
+        h2 {
+            color: #555;
+        }
+
+        p {
+            font-size: 16px;
+            color: #333;
+        }
+
+        img {
+            width: 250px;
+            margin: 20px 0;
+        }
+
+        a {
+            color: #333399;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #333399;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: #5555cc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Basics of Web Development</h1>
+        <h2>HTML, CSS and JavaScript</h2>
+
+        <p>
+            This webpage is created as part of learning the basics of web development.
+            HTML is used to create the structure of the webpage, CSS is used for styling
+            and layout, and JavaScript is used to add interactivity.
+        </p>
+
+        <!-- HTML Image -->
+        <img src="https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg"
+             alt="HTML Logo">
+
+        <p>
+            To learn more about web development concepts, visit
+            <a href="https://developer.mozilla.org" target="_blank">
+                MDN Web Docs
+            </a>.
+        </p>
+
+        <!-- Button -->
+        <button onclick="showMessage()">Click Me</button>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        function showMessage() {
+            alert("Hello! This alert is generated using JavaScript.");
+        }
+    </script>
+</body>
+</html>
