@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Shop</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial}
+body{background:#f4f4f4}
+
+/* LOGIN */
+.container{display:flex;justify-content:center;align-items:center;height:100vh}
+.card{background:white;padding:25px;border-radius:10px;width:300px;text-align:center}
+input{width:100%;padding:8px;margin:10px 0}
+button{padding:10px;background:#28a745;color:white;border:none;width:100%;cursor:pointer}
+.link{color:blue;cursor:pointer}
+
+/* SHOP */
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px;
+background:#222;
+color:white;
+flex-wrap:wrap
+}
+#search{padding:8px;width:200px}
+#products{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+padding:20px
+}
+.product{
+background:white;
+padding:15px;
+border-radius:10px;
+text-align:center
+}
+.product img{
+width:100%;
+height:150px;
+object-fit:cover
+}
+
+/* POPUP */
+.toast{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#28a745;
+color:white;
+padding:15px 25px;
+border-radius:8px;
+display:none;
+}
+
+/* MODAL */
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.5)
+}
+.modal-content{
+background:white;
+padding:20px;
+margin:5% auto;
+width:400px;
+border-radius:10px
+}
+
+/* PAYMENT BOX */
+.payment-box{
+margin-top:15px;
+padding:15px;
+background:#f8f8f8;
+border-radius:10px
+}
+
+.pay-btn{
+background:#ff5722;
+width:100%;
+padding:15px;
+font-size:18px;
+margin-top:10px
+}
+
+@media(max-width:600px){
+header{flex-direction:column;gap:10px}
+#search{width:100%}
+}
+</style>
+</head>
+
+<body>
+
+<div id="toast" class="toast">Item added to cart ✅</div>
+
+<!-- LOGIN -->
+<div id="loginPage" class="container">
+<div class="card">
+<h2>Login</h2>
+<input id="loginEmail" placeholder="Email">
+<input id="loginPass" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+<p>Don't have account? <span class="link" onclick="showSignup()">Signup</span></p>
+</div>
+</div>
+
+<!-- SIGNUP -->
+<div id="signupPage" class="container" style="display:none">
+<div class="card">
+<h2>Signup</h2>
+<input id="signupEmail" placeholder="Email">
+<input id="signupPass" type="password" placeholder="Password">
+<button onclick="signup()">Signup</button>
+<p>Already have account? <span class="link" onclick="showLogin()">Login</span></p>
+</div>
+</div>
+
+<!-- SHOP -->
+<div id="shopPage" style="display:none">
+<header>
+<h2>Smart Shop</h2>
+<input type="text" id="search" placeholder="Search...">
+<span onclick="openCart()" style="cursor:pointer">🛒 <span id="cartCount">0</span></span>
+</header>
+<section id="products"></section>
+</div>
+
+<!-- CART -->
+<div id="cartModal" class="modal">
+<div class="modal-content">
+<h3>Your Cart</h3>
+<ul id="cartItems"></ul>
+<h4>Total: ₹<span id="total"></span></h4>
+
+<div class="payment-box">
+<h4>Payment Method</h4>
+<select style="width:100%;padding:10px;margin-top:10px">
+<option>UPI</option>
+<option>Credit Card</option>
+<option>Debit Card</option>
+<option>Cash on Delivery</option>
+</select>
+
+<button class="pay-btn" onclick="payment()">Complete Payment</button>
+</div>
+
+<button onclick="closeCart()">Close</button>
+</div>
+</div>
+
+<script>
+
+// AUTH
+function signup(){
+let email=document.getElementById("signupEmail").value
+let pass=document.getElementById("signupPass").value
+localStorage.setItem("user",JSON.stringify({email,pass}))
+alert("Signup Success")
+showLogin()
+}
+
+function login(){
+let email=document.getElementById("loginEmail").value
+let pass=document.getElementById("loginPass").value
+let user=JSON.parse(localStorage.getItem("user"))
+
+if(user && email==user.email && pass==user.pass){
+document.getElementById("loginPage").style.display="none"
+document.getElementById("shopPage").style.display="block"
+displayProducts(products)
+}else{
+alert("Invalid Login")
+}
+}
+
+function showSignup(){
+document.getElementById("loginPage").style.display="none"
+document.getElementById("signupPage").style.display="flex"
+}
+function showLogin(){
+document.getElementById("signupPage").style.display="none"
+document.getElementById("loginPage").style.display="flex"
+}
+
+// PRODUCTS
+const products=[
+{name:"Shoes",price:1200,img:"https://images.unsplash.com/photo-1542291026-7eec264c27ff"},
+{name:"Watch",price:900,img:"https://images.unsplash.com/photo-1523275335684-37898b6baf30"},
+{name:"Bag",price:700,img:"https://images.unsplash.com/photo-1584917865442-de89df76afd3"},
+{name:"Headphones",price:1500,img:"https://images.unsplash.com/photo-1518444065439-e933c06ce9cd"},
+{name:"T-shirt",price:500,img:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab"}
+];
+
+let cart=[]
+
+// DISPLAY
+function displayProducts(items){
+const container=document.getElementById("products")
+container.innerHTML=""
+items.forEach((p,i)=>{
+container.innerHTML+=`
+<div class="product">
+<img src="${p.img}" loading="lazy">
+<h4>${p.name}</h4>
+<p>₹${p.price}</p>
+<button onclick="addToCart(${i})">Add to Cart</button>
+</div>`
+})
+}
+
+// POPUP
+function showToast(){
+let toast=document.getElementById("toast")
+toast.style.display="block"
+setTimeout(()=>toast.style.display="none",2000)
+}
+
+// CART
+function addToCart(i){
+cart.push(products[i])
+document.getElementById("cartCount").innerText=cart.length
+showToast()
+}
+
+function openCart(){
+let list=document.getElementById("cartItems")
+list.innerHTML=""
+let total=0
+cart.forEach(c=>{
+list.innerHTML+=`<li>${c.name} - ₹${c.price}</li>`
+total+=c.price
+})
+document.getElementById("total").innerText=total
+document.getElementById("cartModal").style.display="block"
+}
+
+function closeCart(){
+document.getElementById("cartModal").style.display="none"
+}
+
+// PAYMENT
+function payment(){
+alert("Payment Successful ✅")
+cart=[]
+document.getElementById("cartCount").innerText=0
+closeCart()
+}
+
+// SEARCH
+document.getElementById("search").addEventListener("input",e=>{
+let val=e.target.value.toLowerCase()
+let filtered=products.filter(p=>p.name.toLowerCase().includes(val))
+displayProducts(filtered)
+})
+
+</script>
+
+</body>
+</html>
